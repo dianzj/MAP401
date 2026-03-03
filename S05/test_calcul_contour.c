@@ -14,7 +14,7 @@ char *nom_eps(const char *nom_pbm, const char *suffixe)
     char *dot = strrchr(nom, '.');
     if (dot != NULL)
         *dot = '\0';   // supprime ".pbm"
-
+    
     strcat(nom, suffixe); // "_fill.eps" ou "_stroke.eps"
     return nom;
 }

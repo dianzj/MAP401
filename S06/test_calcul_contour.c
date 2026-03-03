@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     
     Liste_Point contour = calcul_contour(img,nb_contour);
     
-    for(int i = 0; i < 2; i++) {
+    for(double i = 0; i < 2; i++) {
      FILE *f=NULL;   
     if(i==0){
         char *nom = nom_eps(argv[1], "_fill.eps");
