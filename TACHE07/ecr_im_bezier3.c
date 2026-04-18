@@ -35,13 +35,15 @@ int main(int argc, char *argv[])
      
     FILE *f=NULL;   
     
-    char *nom = nom_eps(argv[1], "_bez2_fill_d",d);
+    char *nom = nom_eps(argv[1], "_bez3_fill_d",d);
     
     f = fopen(nom, "w");
     if (f == NULL) {
-    printf("Erreur ouverture fichier\n");
-    free(nom);
-    return 1;
+        printf("Erreur ouverture fichier\n");
+        free(nom);
+        return 1;
+        supprimer_ensemble_contours(&cont);
+        supprimer_image(&img);
     }
     
     free(nom);
@@ -63,22 +65,13 @@ int main(int argc, char *argv[])
         Tableau_Point T = sequence_points_liste_vers_tableau(cont.tab[j]);
         supprimer_liste_Point(cont.tab[j]);
         tl_init+=T.taille;
-        Liste_bezier_2 contour= simplification_douglas_peucker_bezier2(T, 0, (int)T.taille-1, (double)d);
+        Liste_bezier_3 contour= simplification_douglas_peucker_bezier3(T, 0, (int)T.taille-1, (double)d);
         //tl_simpl+=contour.taille;
         free(T.tab);
         nb_bez+=contour.taille;
         
-        for(unsigned int k=0;k<contour.taille;k++){
-            bezier_2 cont2=contour.bez2[k];
-            bezier_3  b=conversion_bezier_2_vers_bezier_3(cont2);
-            if( k==0){
-                fprintf(f," %f %f  moveto\n",b.c0.x,H-b.c0.y );
-            }
-            fprintf(f," %f %f %f %f %f %f  curveto\n", b.c1.x,H-b.c1.y, b.c2.x,H-b.c2.y,b.c3.x,H-b.c3.y );
-
-        }
-        fprintf(f, "closepath\n");
-        free(contour.bez2);
+        ecrire_contour_bezier3_eps(contour, f, H);
+        free(contour.bez3);
 
     }
     free(cont.tab);

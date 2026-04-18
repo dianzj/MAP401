@@ -137,48 +137,71 @@ Ensemble_Contours calcul_contour(Image I,int *nb_contour){
     Ensemble_Contours ensemble;
     ensemble.nb=0;
     ensemble.tab = NULL;
-    
-    
-    Point p=trouver_pixel_depart(I_contour);
-    while(p.x!=-1 && p.y!=-1){
-        Liste_Point p_liste=creer_liste_Point_vide();
-        boucle=0;
-         
-        if (p.x<0 || p.y<0){
-        
-        
+    UINT L = largeur_image(I);
+    UINT H = hauteur_image(I);
+    int capacite = 8;
+    ensemble.tab = malloc(capacite * sizeof(Liste_Point));
+    if (ensemble.tab == NULL){
+        supprimer_image(&I_contour);
+        *nb_contour = 0;
         return ensemble;
-        } 
-        Orientation orient=Est;
-        Point p0;
-        p0.x=p.x-1;
-        p0.y=p.y-1;
-        
-        while (boucle==0){
+    }
+    Point p={-1,-1};
+    //Point p=trouver_pixel_depart(I_contour);
+    for (UINT i=1; i<=H ; i++){
+        for (UINT j=1; j<=L; j++){
+            if (get_pixel_image(I_contour, j, i) == NOIR && get_pixel_image(I_contour, j, i-1) == BLANC){
+                Liste_Point p_liste=creer_liste_Point_vide();
+                boucle=0;
+                p.x=j;
+                p.y=i;
+                
+                Orientation orient=Est;
+                Point p0;
+                p0.x=p.x-1;
+                p0.y=p.y-1;
+                
+                while (boucle==0){
+                    
+                    
+                    p_liste=ajouter_element_liste_Point(p_liste,p0);
+                    
+                    set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);
+                    
+                    p0 = avancer(p0, orient);
+                    
+                    
+                    orient = sens(I, p0, orient);
+                    
+                    if (p0.x == p.x-1 && p0.y == p.y-1 && orient == Est) {
+                        boucle = 1;
+                    }    
             
             
-            p_liste=ajouter_element_liste_Point(p_liste,p0);
-            
-            set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);
-            
-            p0 = avancer(p0, orient);
-            
-            
-            orient = sens(I, p0, orient);
-            
-            if (p0.x == p.x-1 && p0.y == p.y-1 && orient == Est) {
-                boucle = 1;
-            }    
-    
-    
-        
-        }
-        ensemble.nb=ensemble.nb+1;
-        p_liste=ajouter_element_liste_Point(p_liste,p0);
-        ensemble.tab = realloc(ensemble.tab, (ensemble.nb) * sizeof(Liste_Point));
-        ensemble.tab[ensemble.nb-1]=p_liste;
-        p=trouver_pixel_depart(I_contour);
+                
+                }
+                
+                //ensemble.nb=ensemble.nb+1;
+                p_liste=ajouter_element_liste_Point(p_liste,p0);
+                if (ensemble.nb == capacite){
+                    capacite *= 2;
+                    Liste_Point *tmp = realloc(ensemble.tab, capacite * sizeof(Liste_Point));
+                    if (tmp == NULL){
+                        supprimer_liste_Point(p_liste);
+                        supprimer_ensemble_contours(&ensemble);
+                        supprimer_image(&I_contour);
+                        *nb_contour = 0;
+                        return ensemble;
+                    }
+                    ensemble.tab = tmp;
+                }
+                
+                ensemble.tab[ensemble.nb]=p_liste;
+                ensemble.nb++;
+                
+            }//if get_pixel_image(I, j, i) == NOIR && get_pixel_image(I, j, i-1) == BLANC
        
+        }
     }
     *nb_contour=ensemble.nb;
     

@@ -27,6 +27,6 @@ Ensemble_Contours calcul_contour(Image I, int *nb_contour);
 void sauver_image_pbm(Image I, const char *nom_f);
 Liste_Point simplification_douglas_peucker (Tableau_Point T, int j1, int j2, double d);
 Liste_bezier_2 simplification_douglas_peucker_bezier2(Tableau_Point T,int j1,int j2,double d);
-
+Liste_bezier_3 simplification_douglas_peucker_bezier3(Tableau_Point T,int j1,int j2,double d);
 #endif
     

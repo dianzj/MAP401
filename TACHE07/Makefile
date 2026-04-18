@@ -37,7 +37,7 @@ INCLUDEOPTS = -I$(INCDIR)
 COMPILOPTS = -g -Wall $(INCLUDEOPTS)
 
 # liste des executables
-EXECUTABLES =   ecr_im_bezier2 test_bezier3
+EXECUTABLES =   ecr_im_bezier2 test_bezier3 ecr_im_bezier3 test_bezier2
 
 
 #############################################################################
@@ -83,7 +83,7 @@ calcul.o : calcul.c calcul.h
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<		
 
-ecr_im_bezier2.o : ecr_im_bezier2.c calcul.h image.h sequence_point.h calcul_contour.h
+ecr_im_bezier2.o : ecr_im_bezier2.c calcul.h image.h sequence_point.h calcul_contour.h ecrire_eps.h
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Compilation du module test_bezier"
@@ -95,11 +95,29 @@ test_bezier3.o : test_bezier3.c calcul.h image.h sequence_point.h calcul_contour
 	@echo "Compilation du module test_bezier3"
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<	
+test_bezier2.o : test_bezier2.c calcul.h image.h sequence_point.h calcul_contour.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module test_bezier2"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<	
+ecr_im_bezier3.o : ecr_im_bezier3.c calcul.h image.h sequence_point.h calcul_contour.h ecrire_eps.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module ecr_im_bezier3"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<	
+ecrire_eps.o : ecrire_eps.c ecrire_eps.h calcul_contour.h sequence_point.h image.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module ecr_eps"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<	
 ########################################################
 # regles explicites de creation des executables
 
 
-ecr_im_bezier2: ecr_im_bezier2.o calcul.o image.o sequence_point.o calcul_contour.o
+ecr_im_bezier2: ecr_im_bezier2.o calcul.o image.o sequence_point.o calcul_contour.o ecrire_eps.o
 	@echo "---------------------------------------------"
 	@echo "Creation de l'executable "$@
 	@echo "---------------------------------------------"
@@ -109,6 +127,17 @@ test_bezier3: test_bezier3.o calcul.o image.o sequence_point.o calcul_contour.o
 	@echo "Creation de l'executable "$@
 	@echo "---------------------------------------------"
 	$(CC) -o $@ $^ $(LDOPTS)
-# regle pour "nettoyer" le r�pertoire
+test_bezier2: test_bezier2.o calcul.o image.o sequence_point.o calcul_contour.o
+	@echo "---------------------------------------------"
+	@echo "Creation de l'executable "$@
+	@echo "---------------------------------------------"
+	$(CC) -o $@ $^ $(LDOPTS)	
+ecr_im_bezier3: ecr_im_bezier3.o calcul.o image.o sequence_point.o calcul_contour.o ecrire_eps.o
+	@echo "---------------------------------------------"
+	@echo "Creation de l'executable "$@
+	@echo "---------------------------------------------"
+	$(CC) -o $@ $^ $(LDOPTS)
+
+# regle pour "nettoyer" le rpertoire
 clean:
 	rm -fR $(EXECUTABLES) *.o 
