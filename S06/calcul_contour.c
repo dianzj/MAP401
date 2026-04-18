@@ -147,7 +147,8 @@ Liste_Point calcul_contour(Image I,int *nb_contour){
             /* memoriser la position */
             
             p_liste=ajouter_element_liste_Point(p_liste,p0);
-            set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);
+            if(orient==Est){
+            set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);}
             /* avancer de 1 */
             p0 = avancer(p0, orient);
             

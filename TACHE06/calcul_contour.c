@@ -145,9 +145,8 @@ Ensemble_Contours calcul_contour(Image I,int *nb_contour){
         boucle=0;
         Point p=trouver_pixel_depart(I_contour);
         if (p.x<0 || p.y<0){
-        
-        
-        return ensemble;
+            supprimer_image(&I_contour);
+            return ensemble;
         } 
         Orientation orient=Est;
         Point p0;
@@ -155,23 +154,15 @@ Ensemble_Contours calcul_contour(Image I,int *nb_contour){
         p0.y=p.y-1;
         
         while (boucle==0){
-            
-            
             p_liste=ajouter_element_liste_Point(p_liste,p0);
-            
-            set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);
-            
+            if(orient==Est){
+            set_pixel_image(I_contour, p0.x+1, p0.y+1, BLANC);}
             p0 = avancer(p0, orient);
-            
-            
             orient = sens(I, p0, orient);
             
             if (p0.x == p.x-1 && p0.y == p.y-1 && orient == Est) {
                 boucle = 1;
             }    
-    
-    
-        
         }
         ensemble.nb=ensemble.nb+1;
         p_liste=ajouter_element_liste_Point(p_liste,p0);
@@ -180,7 +171,6 @@ Ensemble_Contours calcul_contour(Image I,int *nb_contour){
        
     }
     *nb_contour=ensemble.nb;
-    
     supprimer_image(&I_contour);
     return ensemble;
 }
@@ -213,18 +203,13 @@ void sauver_image_pbm(Image I, const char *nom_f)
 Liste_Point simplification_douglas_peucker(Tableau_Point T,int j1,int j2,double d)
 {
     Liste_Point L = creer_liste_Point_vide();
-
     Point pj1 = T.tab[j1];
     Point pj2 = T.tab[j2];
-
-    /* ==== CAS DE BASE ==== */
     if (j2 <= j1 + 1) {
         L = ajouter_element_liste_Point(L, pj1);
         L = ajouter_element_liste_Point(L, pj2);
         return L;
-    }
-
-    /* ==== Recherche du point le plus éloigné ==== */
+    }  
     double dmax = 0.0;
     int k = j1;
 
@@ -236,18 +221,17 @@ Liste_Point simplification_douglas_peucker(Tableau_Point T,int j1,int j2,double 
         }
     }
 
-    /* ==== Si la distance max est inférieure au seuil ==== */
+    
     if (dmax <= d) {
         L = ajouter_element_liste_Point(L, pj1);
         L = ajouter_element_liste_Point(L, pj2);
         return L;
     }
-
-    /* ==== Sinon : diviser pour régner ==== */
+    
     Liste_Point L1 = simplification_douglas_peucker(T, j1, k, d);
     Liste_Point L2 = simplification_douglas_peucker(T, k, j2, d);
 
-    /* IMPORTANT : enlever le premier point de L2 (doublon Pk) */
+
     L2 = supprimer_premier_element_liste_Point(L2);
 
     L = concatener_liste_Point(L1, L2);

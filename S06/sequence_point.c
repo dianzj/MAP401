@@ -143,12 +143,12 @@ void ecrire_contour(Liste_Point L, int nb_contour)
 	
 	printf("Contour avec %d points  %d contour %d segment\n[", nP, nb_contour, nP-nb_contour);
 	
-	for (k = 0; k < nP; k++)
+	/*for (k = 0; k < nP; k++)
 	{	
-		Point P = TP.tab[k]; /* recuperer le point d'indice k */
+		Point P = TP.tab[k]; 
 		printf(" (%5.1f,%5.1f)", P.x, P.y);
-	} 
-	printf("]\n");
+	} */
+	//printf("]\n");
 	
 	free(TP.tab); /* supprimer le tableau de point TP */
 }

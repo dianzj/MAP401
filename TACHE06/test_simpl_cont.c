@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
         printf("Usage: %s <image_file.pbm>\n", argv[0]);
         return 1;
     }
-    int *nb_contour = malloc(sizeof(int));
-    *nb_contour = 0;
+    int nb_contour = 0;
+    
     Image img = lire_fichier_image(argv[1]); 
     
     
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     
     //free(T.tab);
     //Ensemble_Contours contour_simplifie;
-    Ensemble_Contours cont = calcul_contour(img,nb_contour);  
+    Ensemble_Contours cont = calcul_contour(img,&nb_contour);  
     for(int i = 0; i < 2; i++) {
     
     
@@ -66,8 +66,7 @@ int main(int argc, char *argv[])
         free(T.tab);
         taille+=contour.taille;
         Cellule_Liste_Point *el = contour.first;
-        double x=el->data.x ;
-        double y=el->data.y; 
+        
         
 
         fprintf(f," %f %f  moveto\n", el->data.x ,H- el->data.y );
@@ -78,17 +77,7 @@ int main(int argc, char *argv[])
         {   
             
             el = el->suiv;
-            x=el->data.x;
-            y=H-el->data.y;
-        
-            /*if(x==x0 && y==y0 && el->suiv != NULL){
-                x0=el->suiv->data.x ;
-                y0=H-el->suiv->data.y;
-                fprintf(f, " %f %f  moveto\n", x0,y0);
-                el=el->suiv;
-            }*/
-            //else{
-                fprintf(f, " %f %f  lineto\n", x,y);
+            fprintf(f, " %f %f  lineto\n",el->data.x,H-el->data.y);
             }
             fprintf(f, "closepath\n");
 
@@ -103,11 +92,12 @@ int main(int argc, char *argv[])
     
     fprintf(f, " fill\n");
     fprintf(f, "showpage\n");
-    fclose(f);  
-    printf("Nombre de point :%d\n ;Nombre de contours : %d\n Nombre de segments : %d\n", taille, *nb_contour, taille-*nb_contour);    
+    fclose(f);
+      
+    printf("Pour d=%d on a:\n Nombre de point :%d\n Nombre de contours : %d\n Nombre de segments : %d\n",i+1, taille, nb_contour, taille-nb_contour);    
         }  
     supprimer_ensemble_contours(&cont);
     supprimer_image(&img);
-    free(nb_contour);
+    
     return 0;
 }

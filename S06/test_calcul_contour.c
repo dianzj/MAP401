@@ -20,7 +20,8 @@ char *nom_eps(const char *nom_pbm, const char *suffixe)
 }
 
 int main(int argc, char *argv[])
-{
+{ 
+    printf("Usage: %s ", argv[1]);
     if(argc != 2) {
         printf("Usage: %s <image_file.pbm>\n", argv[0]);
         return 1;
@@ -45,7 +46,12 @@ int main(int argc, char *argv[])
     }
     int L = largeur_image(img);
     int H = hauteur_image(img);  
-    
+    if (contour.first == NULL) {
+        printf("Aucun contour trouve.\n");
+        supprimer_image(&img);
+        free(nb_contour);
+        return 0;
+    }
     Cellule_Liste_Point *el = contour.first;
     double x=el->data.x ;
     double y=el->data.y; 
@@ -66,15 +72,22 @@ int main(int argc, char *argv[])
         y=H-el->data.y;
        
         if(x==x0 && y==y0 && el->suiv != NULL){
-            x0=el->suiv->data.x ;
-            y0=H-el->suiv->data.y;
-            fprintf(f, " %f %f  moveto\n", x0,y0);
-            el=el->suiv;
-        }
+            fprintf(f, " %f %f  lineto\n", x,y);
+            
+                  
+            if(el->suiv!=NULL){
+                x0=el->suiv->data.x ;
+                y0=H-el->suiv->data.y;
+                fprintf(f, " %f %f  moveto\n", x0,y0);
+                el=el->suiv;
+            }
+        }    
         else{
-            fprintf(f, " %f %f  lineto\n", x,y);}
+            fprintf(f, " %f %f  lineto\n", x,y);}    
+        }
+        
          
-    }
+    
     if(i==0){
         fprintf(f, " fill\n");
         fprintf(f, "showpage\n");
